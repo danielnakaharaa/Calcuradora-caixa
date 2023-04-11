@@ -1,0 +1,38 @@
+using System;
+using System.Management;
+
+namespace SpoofBIOS
+{
+    class Program
+    {
+        static void Main(string[] args)
+        {
+            try
+            {
+                ManagementObjectSearcher searcher = new ManagementObjectSearcher("root\\CIMV2", "SELECT * FROM Win32_ComputerSystemProduct");
+
+                foreach (ManagementObject queryObj in searcher.Get())
+                {
+                    string currentVersion = queryObj["Version"].ToString();
+                    // Alterar aqui a versão da BIOS desejada, se necessário.
+                    string newVersion = "v1.0";
+
+                    if (currentVersion != newVersion)
+                    {
+                        queryObj["Version"] = newVersion;
+                        queryObj.Put();
+                        // Imprimir no console a versão atual e a nova versão da BIOS.
+                        Console.WriteLine("Versão atual da BIOS: " + currentVersion);
+                        Console.WriteLine("Nova versão da BIOS: " + newVersion);
+                        Console.ReadKey();
+                        break;
+                    }
+                }
+            }
+            catch (ManagementException e)
+            {
+                Console.WriteLine("Erro: " + e.Message);
+            }
+        }
+    }
+}
